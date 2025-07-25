@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 
 class ExerciseAdapter(
-    private val exerciseList: List<Exercise>,
+    private var exerciseList: List<Exercise>,
     private val onItemClick: (Exercise) -> Unit // 람다 함수를 통해 클릭 이벤트 전달
 ) : RecyclerView.Adapter<ExerciseAdapter.ExerciseViewHolder>() {
 
@@ -32,4 +32,10 @@ class ExerciseAdapter(
     }
 
     override fun getItemCount() = exerciseList.size
+
+    //검색 목록 업데이트
+    fun updateList(newList: List<Exercise>) {
+        exerciseList = newList
+        notifyDataSetChanged()
+    }
 }
