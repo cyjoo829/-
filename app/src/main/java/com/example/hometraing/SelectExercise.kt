@@ -17,6 +17,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import android.content.Intent
 
 
 //선택화면
@@ -51,6 +55,7 @@ class SelectExercise : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_select_exercise)
+
 
         // UI 요소 초기화
         val btnUpperBody: Button = findViewById(R.id.btn_upper_body)
@@ -113,9 +118,9 @@ class SelectExercise : AppCompatActivity() {
             displayExercises(currentDisplayedCategory)
             searchEditText.text.clear()
         }
-        btnAllExercises.setOnClickListener { // **새로 추가된 "전체" 버튼 리스너**
+        btnAllExercises.setOnClickListener {
             currentDisplayedCategory = "전체" // "전체" 카테고리로 설정
-            displayExercises(currentDisplayedCategory) // 모든 운동을 보여주도록 호출
+            displayExercises(currentDisplayedCategory)
             searchEditText.text.clear()
         }
 
@@ -137,6 +142,20 @@ class SelectExercise : AppCompatActivity() {
                 }
             }
         })
+        //운동 코스 저장
+        val btnSaveCourse: Button = findViewById(R.id.btn_save_course)
+        btnSaveCourse.setOnClickListener {
+            if (selectedExercises.isEmpty()) {
+                Toast.makeText(this, "운동 코스를 저장하려면 운동을 선택해주세요.", Toast.LENGTH_SHORT).show()
+            } else {
+                // TrainingActivity로 이동하며 선택된 운동 목록 전달
+                val intent = Intent(this, TrainingActivity::class.java).apply {
+                    putExtra("selectedExercises", ArrayList(selectedExercises)) // ArrayList로 변환하여 전달
+                }
+                startActivity(intent)
+            }
+        }
+
     }
 
     // 요일 체크박스 리스너 설정 함수
@@ -220,10 +239,10 @@ class SelectExercise : AppCompatActivity() {
         } else {
             // 쿼리가 있을 때: 현재 표시된 카테고리 내에서 검색
             if (currentDisplayedCategory == "전체") {
-                allExercises.filter { it.name.lowercase().contains(query) } // 전체 운동에서 이름으로 검색
+                allExercises.filter { it.name!!.lowercase().contains(query) } // 전체 운동에서 이름으로 검색
             } else {
                 allExercises.filter {
-                    it.category == currentDisplayedCategory && it.name.lowercase().contains(query)
+                    it.category == currentDisplayedCategory && it.name!!.lowercase().contains(query)
                 }
             }
         }
@@ -269,4 +288,5 @@ class SelectExercise : AppCompatActivity() {
         val dialog = builder.create()
         dialog.show()
     }
+
 }

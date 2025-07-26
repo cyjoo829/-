@@ -193,5 +193,12 @@
             android:background="#673AB7"
             android:backgroundTint="#673AB7"
             android:scrollbars="vertical" />
+
+        <Button
+            android:id="@+id/btn_save_course"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="선택한 운동 코스 저장"/>
     </LinearLayout>
 </ScrollView>
