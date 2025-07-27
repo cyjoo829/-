@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="24dp"
+    tools:context=".ResultActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="운동 완료!"
+        android:textSize="36sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="40dp"/>
+
+    <TextView
+        android:id="@+id/tv_encouragement_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="오늘도 정말 수고하셨습니다! 당신의 노력이 빛을 발할 거예요!"
+        android:textSize="20sp"
+        android:textStyle="italic"
+        android:gravity="center"
+        android:layout_marginBottom="30dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"/>
+
+    <TextView
+        android:id="@+id/tv_total_calories"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="총 소모 칼로리: 0 kcal"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="20dp"/>
+
+    <TextView
+        android:id="@+id/tv_total_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="총 운동 시간: 00:00"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="40dp"/>
+
+    <Button
+        android:id="@+id/btn_back_to_main"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="메인 화면으로"
+        android:textSize="18sp"
+        android:paddingStart="30dp"
+        android:paddingEnd="30dp"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:textColor="@android:color/white"/>
+
+</LinearLayout>

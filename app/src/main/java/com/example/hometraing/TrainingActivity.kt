@@ -7,6 +7,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.hometraing.selected.Exercise
+import android.content.Intent
 
 class TrainingActivity : AppCompatActivity() {
 
@@ -24,6 +25,10 @@ class TrainingActivity : AppCompatActivity() {
     private var isTimerRunning: Boolean = false // 타이머가 현재 작동 중인지 여부
     private var timeLeftInMillis: Long = 0 // 남은 시간 (일시정지 시 저장)
     private val REST_TIME_SECONDS = 20
+
+    private var totalCaloriesBurned: Int = 0
+    private var totalWorkoutTimeSeconds: Int = 0
+    private var currentExerciseStartTime: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,21 +87,24 @@ class TrainingActivity : AppCompatActivity() {
                 val durationString = currentExercise.duration // 예: "30초", "60초"
                 val durationInSeconds = durationString?.replace("초", "")?.trim()?.toIntOrNull() ?: 0
                 timeLeftInMillis = (durationInSeconds * 1000).toLong()
+                currentExerciseStartTime = System.currentTimeMillis() // 운동 시작 시간 기록
             } else {
                 timeLeftInMillis = (REST_TIME_SECONDS * 1000).toLong()
             }
             updateCountDownText() // 텍스트만 업데이트, 타이머 시작은 안 함
         } else {
-            // 모든 운동 완료
-            tvExerciseName.text = "운동 완료!"
-            tvTimer.text = "00:00"
-            Toast.makeText(this, "모든 운동을 완료했습니다!", Toast.LENGTH_LONG).show()
-            btnStartPause.isEnabled = false
-            btnNextExercise.isEnabled = false
-            btnPreviousExercise.isEnabled = false
+            // 모든 운동 완료 시 ResultActivity로 이동
             countDownTimer?.cancel()
             isTimerRunning = false
-            btnStartPause.text = "완료"
+
+            // 마지막 운동까지 완료되었을 때 총 운동 시간 및 칼로리 계산 완료
+            // ResultActivity로 전환
+            val intent = Intent(this, ResultActivity::class.java).apply {
+                putExtra("totalCalories", totalCaloriesBurned)
+                putExtra("totalWorkoutTimeSeconds", totalWorkoutTimeSeconds)
+            }
+            startActivity(intent)
+            finish() // TrainingActivity 종료
         }
     }
 
@@ -117,9 +125,25 @@ class TrainingActivity : AppCompatActivity() {
 
                 if (!isResting) {
                     // 운동 타이머 종료 후 쉬는 시간 시작
+                    val currentExercise = selectedExercises[currentExerciseIndex]
+                    val durationString = currentExercise.duration // 예: "30초", "60초"
+                    val durationInSeconds = durationString?.replace("초", "")?.trim()?.toIntOrNull() ?: 0
+
+                    // 운동 시간 누적
+                    totalWorkoutTimeSeconds += durationInSeconds
+
+                    // 칼로리 계산 및 누적
+                    val caloriesString = currentExercise.caloriesBurned
+                    val regex = Regex("\\d+") // 숫자만 추출하는 정규식
+                    val matchResult = regex.find(caloriesString ?: "")
+                    val caloriesPerExercise = matchResult?.value?.toIntOrNull() ?: 0
+                    totalCaloriesBurned += caloriesPerExercise
+
                     startRestingPhase()
                 } else {
                     // 쉬는 시간 타이머 종료 후 다음 운동으로 이동
+                    // 쉬는 시간도 총 운동 시간에 포함
+                    totalWorkoutTimeSeconds += REST_TIME_SECONDS
                     moveToNextExerciseAuto()
                 }
             }
@@ -161,6 +185,26 @@ class TrainingActivity : AppCompatActivity() {
         isResting = false // 쉬는 시간 상태 초기화
         btnStartPause.text = "시작" // 버튼 텍스트 초기화
 
+        // 현재 운동의 시간과 칼로리를 누적 (수동 전환 시)
+        if (currentExerciseIndex < selectedExercises.size) { // 운동 완료 상태가 아닐 때만 계산
+            val currentExercise = selectedExercises[currentExerciseIndex]
+            val durationString = currentExercise.duration
+            val durationInSeconds = durationString?.replace("초", "")?.trim()?.toIntOrNull() ?: 0
+
+            // 타이머가 작동 중이었다면 남은 시간만큼만 운동 시간으로 계산
+            val actualExerciseDuration = (currentExercise.duration?.replace("초", "")?.trim()?.toIntOrNull() ?: 0) - (timeLeftInMillis / 1000).toInt()
+            totalWorkoutTimeSeconds += actualExerciseDuration.coerceAtLeast(0) // 음수가 되지 않도록
+
+            val caloriesString = currentExercise.caloriesBurned
+            val regex = Regex("\\d+")
+            val matchResult = regex.find(caloriesString ?: "")
+            val caloriesPerExercise = matchResult?.value?.toIntOrNull() ?: 0
+            // 수동 전환 시에도 칼로리를 누적하지만, 실제 소모 시간만큼 비례하여 계산하려면 더 복잡한 로직 필요.
+            // 여기서는 단순하게 해당 운동의 기본 칼로리를 더함.
+            totalCaloriesBurned += caloriesPerExercise
+        }
+
+
         if (currentExerciseIndex < selectedExercises.size - 1) {
             currentExerciseIndex++
             updateExerciseUI()
@@ -180,6 +224,9 @@ class TrainingActivity : AppCompatActivity() {
         isTimerRunning = false
         isResting = false // 쉬는 시간 상태 초기화
         btnStartPause.text = "시작" // 버튼 텍스트 초기화
+
+        // 이전 운동으로 돌아갈 때는 현재 운동의 시간/칼로리 누적을 되돌리지 않음 (단순히 UI만 변경)
+        // 만약 되돌리고 싶다면 더 복잡한 로직이 필요합니다.
 
         if (currentExerciseIndex > 0) {
             currentExerciseIndex--

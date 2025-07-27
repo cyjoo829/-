@@ -7,19 +7,23 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import android.app.AlertDialog
+import android.content.Intent
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
 import android.text.TextWatcher
 import android.text.Editable
+import android.util.Log
+import com.example.hometraing.TrainingActivity
+import com.example.hometraing.selected.Exercise
+import com.example.hometraing.selected.ExerciseAdapter
+import com.example.hometraing.R
+import com.example.hometraing.selected.SelectedExerciseAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import android.content.Intent
-import com.example.hometraing.R
-import com.example.hometraing.TrainingActivity
 
 
 //선택화면
@@ -55,6 +59,7 @@ class SelectExercise : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_select_exercise)
 
+        //val dbManager = DBManager(this)  // DBManager 인스턴스 생성
 
         // UI 요소 초기화
         val btnUpperBody: Button = findViewById(R.id.btn_upper_body)
@@ -62,6 +67,7 @@ class SelectExercise : AppCompatActivity() {
         val btnLowerBody: Button = findViewById(R.id.btn_lower_body)
         val btnFullBody: Button = findViewById(R.id.btn_full_body)
         val btnAllExercises: Button = findViewById(R.id.btn_all_exercises) // **새로 추가된 "전체" 버튼 초기화**
+        val btnSave: Button = findViewById(R.id.btnSave)
 
         recyclerView = findViewById(R.id.recycler_view_exercises)
         searchEditText = findViewById(R.id.searchEditText)
@@ -85,8 +91,7 @@ class SelectExercise : AppCompatActivity() {
         //선택된 운동 목록 RecyclerView 초기화
         selectedExercisesRecyclerView = findViewById(R.id.recycler_view_selected_exercises)
         selectedExercisesRecyclerView.layoutManager = LinearLayoutManager(this)
-        selectedExerciseAdapter = SelectedExerciseAdapter(selectedExercises) {
-                exercise ->
+        selectedExerciseAdapter = SelectedExerciseAdapter(selectedExercises) { exercise ->
             selectedExercises.remove(exercise)
             Toast.makeText(this, "${exercise.name}이(가) 선택 목록에서 삭제되었습니다.", Toast.LENGTH_SHORT).show()
             selectedExerciseAdapter.updateList()
@@ -117,9 +122,9 @@ class SelectExercise : AppCompatActivity() {
             displayExercises(currentDisplayedCategory)
             searchEditText.text.clear()
         }
-        btnAllExercises.setOnClickListener {
+        btnAllExercises.setOnClickListener { // **새로 추가된 "전체" 버튼 리스너**
             currentDisplayedCategory = "전체" // "전체" 카테고리로 설정
-            displayExercises(currentDisplayedCategory)
+            displayExercises(currentDisplayedCategory) // 모든 운동을 보여주도록 호출
             searchEditText.text.clear()
         }
 
@@ -141,20 +146,21 @@ class SelectExercise : AppCompatActivity() {
                 }
             }
         })
-        //운동 코스 저장
-        val btnSaveCourse: Button = findViewById(R.id.btn_save_course)
-        btnSaveCourse.setOnClickListener {
+
+        btnSave.setOnClickListener {
             if (selectedExercises.isEmpty()) {
-                Toast.makeText(this, "운동 코스를 저장하려면 운동을 선택해주세요.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "운동을 시작하려면 운동을 선택해주세요.", Toast.LENGTH_SHORT).show()
             } else {
                 // TrainingActivity로 이동하며 선택된 운동 목록 전달
                 val intent = Intent(this, TrainingActivity::class.java).apply {
-                    putExtra("selectedExercises", ArrayList(selectedExercises)) // ArrayList로 변환하여 전달
+                    putExtra(
+                        "selectedExercises",
+                        ArrayList(selectedExercises)
+                    ) // ArrayList로 변환하여 전달
                 }
                 startActivity(intent)
             }
         }
-
     }
 
     // 요일 체크박스 리스너 설정 함수
@@ -287,5 +293,4 @@ class SelectExercise : AppCompatActivity() {
         val dialog = builder.create()
         dialog.show()
     }
-
 }
