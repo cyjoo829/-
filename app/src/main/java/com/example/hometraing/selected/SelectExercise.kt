@@ -18,6 +18,7 @@ import com.example.hometraing.TrainingActivity
 import com.example.hometraing.selected.Exercise
 import com.example.hometraing.selected.ExerciseAdapter
 import com.example.hometraing.R
+import com.example.hometraing.StretchingActivity
 import com.example.hometraing.selected.SelectedExerciseAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -152,7 +153,7 @@ class SelectExercise : AppCompatActivity() {
                 Toast.makeText(this, "운동을 시작하려면 운동을 선택해주세요.", Toast.LENGTH_SHORT).show()
             } else {
                 // TrainingActivity로 이동하며 선택된 운동 목록 전달
-                val intent = Intent(this, TrainingActivity::class.java).apply {
+                val intent = Intent(this, StretchingActivity::class.java).apply {
                     putExtra(
                         "selectedExercises",
                         ArrayList(selectedExercises)

@@ -19,10 +19,14 @@ class ResultActivity : AppCompatActivity() {
         val tvTotalTime: TextView = findViewById(R.id.tv_total_time)
 
         // Intent로부터 데이터 받기
-        val totalCalories = intent.getIntExtra("totalCalories", 0)
+        var totalCalories = intent.getIntExtra("totalCalories", 0)
         val totalWorkoutTimeSeconds = intent.getIntExtra("totalWorkoutTimeSeconds", 0)
 
         val btn_back_to_main: Button = findViewById(R.id.btn_back_to_main)
+
+        if (totalWorkoutTimeSeconds == 0) {
+            totalCalories = 0
+        }
 
         // 격려의 말 랜덤 선택
         val encouragementMessages = listOf(
