@@ -26,7 +26,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SelectExercise"
+            android:name=".selected.SelectExercise"
             android:exported="false" />
     </application>
 

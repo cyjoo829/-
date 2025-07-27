@@ -1,4 +1,4 @@
-package com.example.hometraing
+package com.example.hometraing.selected
 
 import android.os.Bundle
 import android.widget.Button
@@ -17,10 +17,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 import android.content.Intent
+import com.example.hometraing.R
+import com.example.hometraing.TrainingActivity
 
 
 //선택화면

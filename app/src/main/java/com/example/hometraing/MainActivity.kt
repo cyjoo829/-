@@ -3,9 +3,8 @@ package com.example.hometraing // 여러분의 실제 패키지명
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import android.util.Log // Logcat 출력을 위해 추가
+import com.example.hometraing.selected.SelectExercise
 
 // 메인화면
 class MainActivity : AppCompatActivity() {
